@@ -4,6 +4,7 @@ import pandas as pd
 import joblib
 import numpy as np
 from os.path import dirname
+from symptomsDictModel import symptomsDict
 
 diseases=np.array(['(vertigo) Paroymsal  Positional Vertigo', 'AIDS', 'Acne', 
 'Alcoholic hepatitis', 'Allergy', 'Arthritis', 'Bronchial Asthma', 
@@ -45,6 +46,45 @@ def predictKnn():
     else:
         print ('Train the model first')
         return ('No model here to use')
+
+
+@app.route('/svc-predict-another', methods=['POST'])
+def predictSvcAnother():
+    if svcModel:
+        try:
+            symptoms = symptomsDict
+            symptoms = dict.fromkeys(symptoms,0)
+            body = request.json
+            for symp in body:
+                symptoms[symp] = body[symp]
+            arrayJson = [symptoms]
+            input = pd.get_dummies(pd.DataFrame(arrayJson))
+            prediction = diseases[svcModel.predict(input)]
+            return jsonify({'prediction': str(prediction[0])})
+        except:
+            return jsonify({'trace': traceback.format_exc()})
+    else:
+        print ('Train the model first')
+        return ('No model here to use')
+@app.route('/knn-predict-another', methods=['POST'])
+def predictKnnAnother():
+    if knnModel:
+        try:
+            symptoms = symptomsDict
+            symptoms = dict.fromkeys(symptoms,0)
+            body = request.json
+            for symp in body:
+                symptoms[symp] = body[symp]
+            arrayJson = [symptoms]
+            input = pd.get_dummies(pd.DataFrame(arrayJson))
+            prediction = diseases[knnModel.predict(input)]
+            return jsonify({'prediction': str(prediction[0])})
+        except:
+            return jsonify({'trace': traceback.format_exc()})
+    else:
+        print ('Train the model first')
+        return ('No model here to use')
+
 
 if __name__ == '__main__':
     path=dirname(dirname(__file__)).replace('\\','/')
