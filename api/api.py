@@ -5,6 +5,7 @@ import joblib
 import numpy as np
 from os.path import dirname
 from symptomsDictModel import symptomsDict
+from flask_cors import CORS, cross_origin
 
 diseases=np.array(['(vertigo) Paroymsal  Positional Vertigo', 'AIDS', 'Acne', 
 'Alcoholic hepatitis', 'Allergy', 'Arthritis', 'Bronchial Asthma', 
@@ -18,6 +19,7 @@ diseases=np.array(['(vertigo) Paroymsal  Positional Vertigo', 'AIDS', 'Acne',
 
 
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 #route for svc model
 @app.route("/svc-predict", methods=['POST'])
 def predictSvc():
